@@ -2,6 +2,8 @@ import chess
 
 import random
 
+import atexit
+
 import pyttsx3
 
 from helpers.string_editing import Edit
@@ -10,6 +12,8 @@ from helpers.string_editing import Edit
 class ChessGame:
 
     def __init__(self, player1, player2):
+        self.narration = False
+
         self.flipped = False
 
         # define the players and select a random first player
@@ -38,11 +42,11 @@ class ChessGame:
     it adds their move to the game pgn.
     """
     def do_move(self):
-        if not self.board.is_checkmate():
+        if not self.board.is_game_over():
             move = self.players[self.current_player].do_move(self.board)
             self.board.push_san(move)
-            #if not self.players[self.current_player].human:
-             #   self.say_move(move)
+            if self.narration and not self.players[self.current_player].human:
+                self.say_move(move)
 
             if self.turn % 2 == 0:
                 round_number = int(self.turn/2 + 1)
@@ -54,6 +58,7 @@ class ChessGame:
             self.change_player()
         else:
             if not self.game_finished:
+                print("game done")
                 self.game_finished = True
                 print(self.pgn_text)
 
@@ -67,3 +72,8 @@ class ChessGame:
         print(pronounceable)
         self.narrator.say(pronounceable)
         self.narrator.runAndWait()
+
+    def exit_handler(self):
+        print(self.pgn_text)
+
+    atexit.register(exit_handler)

@@ -19,7 +19,7 @@ class GameLoop(QThread):
 
         # create the 2 players
         player1 = ConsolePlayer()
-        player2 = MinimaxPlayer()
+        player2 = MinimaxPlayer(depth=3)
 
         # create the chess game which keeps track of turns and additional logic
         self.game = ChessGame(player1, player2)
@@ -28,6 +28,5 @@ class GameLoop(QThread):
         while True:
             self.send_board.emit(self.game.board, self.game.flipped)
             self.game.do_move()
-            # a small delay to be able to see all the moves
-            self.msleep(300)
-
+            # a small delay to be able to see all the moves (only enable if it is to fast to follow otherwise.)
+            # self.msleep(300)
